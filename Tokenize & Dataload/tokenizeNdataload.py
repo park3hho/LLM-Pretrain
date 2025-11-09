@@ -40,12 +40,11 @@ class MyDataset(Dataset):
         return self.input_ids[idx], self.target_ids[idx]
 
 # with open("cleaned_한글문서.txt", 'r', encoding='utf-8-sig') as file: # 선택: -sig를 붙여서 BOM 제거
-with open("cleaned_02 Harry Potter and the Chamber of Secrets.txt", 'r', encoding='utf-8-sig') as file: # 선택: -sig를 붙여서 BOM 제거
+with open("../DataSet/Cleaned_Dataset/cleaned_02 Harry Potter and the Chamber of Secrets.txt", 'r', encoding='utf-8-sig') as file: # 선택: -sig를 붙여서 BOM 제거
     txt = file.read()
 
 dataset = MyDataset(txt, max_length = 32, stride = 4)
 
 train_loader = DataLoader(dataset, batch_size=128, shuffle=True, drop_last=True)
 
-# 주의: 여기서는 코드를 단순화하기 위해 test, valid는 생략하고 train_loader만 만들었습니다.
-#      관련된 ML 이론이 궁금하신 분들은 train vs test vs validation 등으로 검색해보세요.
+# 주의: 여기서는 코드를 단순화하기 위해 test, valid는 생략

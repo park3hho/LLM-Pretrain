@@ -1,0 +1,11 @@
+version: '3.11'
+
+services:
+  llmpretrain:
+    build: .
+    container_name: llm-cont
+    volumes:
+      - ./:/app   # docker-compose.yml이 있는 폴더를 컨테이너 /app과 동기화
+    working_dir: /app
+    command: bash  # 실행 시 bash로 접속, 필요 시 uv run python main.py로 바꿀 수 있음
+    tty: true
