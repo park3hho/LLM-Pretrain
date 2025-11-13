@@ -77,41 +77,55 @@ self.register_buffer('mask', torch.triu(torch.ones(CONTEXT_LENGTH, CONTEXT_LENGT
  [0, 0, 1, 1],
  [0, 0, 0, 1],
  [0, 0, 0, 0]]
-
+    
 ## 순전파 (foward)
-(1) 입력 형태
+### 입력 형태
+```
 b, num_tokens, d_in = x.shape
+```
+- b: batch size
+- num_tokens: 한 문장(시퀀스)의 토큰 수
+- d_in: 입력 임베딩 차원
+> 보통 몇개의 feature로 이루어져있는데?
 
+| 모델 종류            | 입력 임베딩 차원(d_in or d_model) | 비고                       |
+| ---------------- | -------------------------- | ------------------------ |
+| 소형 모델 (toy, 실습용) | 64 ~ 256                   | GPU/CPU에서도 빠르게 학습 가능     |
+| 중형 모델 (기초 NLP)   | 512 ~ 1024                 | BERT base, GPT-2 small 등 |
+| 대형 모델 (상용 LLM)   | 2048 ~ 12288               | GPT-3, LLaMA, Falcon 등   |
+| 비전 트랜스포머(ViT)    | 256 ~ 1024                 | 이미지 patch 임베딩            |
 
-b: batch size
+> 임베딩 차원을 입력과 출력 두가지를 다르게 해도 되는가?
+>- FFN(Feed Foward Network) 예시
+> ```
+> self.fc1 = nn.Linear(512, 2048)  # 확장
+> self.fc2 = nn.Linear(2048, 512)  # 축소
+> ```
+>- (1) 비선형 변형 공간을 넓혀서 표현력 증가 (확장)
+>- (2) 정보 확장 & 추상화 단계 (응용)
+>- (3) 학습 안정화 (축소)
 
-num_tokens: 한 문장(시퀀스)의 토큰 수
-
-d_in: 입력 임베딩 차원
-
-예: (b=16, num_tokens=128, d_in=512)
-
-(2) Q, K, V 계산
+### Q, K, V Mapping
+``` QKV Mapping 
 keys = self.W_key(x)
 queries = self.W_query(x)
 values = self.W_value(x)
+```
+- 입력 문장의 각 단어를 Query, Key, Value 벡터로 매핑
 
-
-입력 문장의 각 단어를
-Query, Key, Value 벡터로 매핑합니다.
-shape: (b, num_tokens, d_out)
-
-(3) 여러 헤드로 분리
+###  여러 헤드로 분리
+```
 keys = keys.view(b, num_tokens, NUM_HEADS, self.head_dim)
 queries = queries.view(b, num_tokens, NUM_HEADS, self.head_dim)
 values = values.view(b, num_tokens, NUM_HEADS, self.head_dim)
-
+```
 
 이제 각 단어의 임베딩을 NUM_HEADS 개로 쪼갭니다.
-
 원래: (b, num_tokens, 512)
-
 바뀐 후: (b, num_tokens, 8, 64)
+> 잠깐 왜 나누어야 하는건데?
+>- Multi-Head Attention의 가장 핵심적인 부분,
+>- 각 헤드가 각자의 벡터 공간을 사용하여 본다면 
 
 (4) 차원 재배열 (헤드 기준 계산하기 위해)
 keys = keys.transpose(1, 2)
