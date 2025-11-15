@@ -60,8 +60,8 @@ self.W_value = nn.Linear(d_in, d_out, bias=QKV_BIAS)
 self.out_proj = nn.Linear(d_out, d_out)
 self.dropout = nn.Dropout(DROP_RATE)
 ```
-- 여러 헤드의 출력을 다시 합쳐 최종 출력으로 변환 / 여러 헤드를 합친 결과에
-마지막으로 적용되는 출력 투사층 
+- 여러 헤드의 출력을 다시 합쳐층 최종 출력으로 변환 / 여러 헤드를 합친 결과에
+마지막으로 적용되는 출력 투사 
 - Dropout으로 일부 연결을 끊어 과적합 방지(regularization)
 > regularization이 왜 필요한데? `d_model`이 무슨 의미인데?
 
@@ -86,7 +86,7 @@ b, num_tokens, d_in = x.shape
 ```
 - b: batch size
 - num_tokens: 한 문장(시퀀스)의 토큰 수
-- d_in: 입력 임베딩 차원
+- d_in: 입력 임베딩 차원 > 계산 위도
 > 보통 몇개의 feature로 이루어져있는데?
 
 | 모델 종류            | 입력 임베딩 차원(d_in or d_model) | 비고                       |
@@ -120,23 +120,22 @@ keys = keys.view(b, num_tokens, NUM_HEADS, self.head_dim)
 queries = queries.view(b, num_tokens, NUM_HEADS, self.head_dim)
 values = values.view(b, num_tokens, NUM_HEADS, self.head_dim)
 ```
+- 이제 각 단어의 임베딩을 NUM_HEADS 개로 쪼개기
+- 원래: (b, num_tokens, 512)
+- 바뀐 후: (b, num_tokens, 8, 64)
 
-이제 각 단어의 임베딩을 NUM_HEADS 개로 쪼갭니다.
-원래: (b, num_tokens, 512)
-바뀐 후: (b, num_tokens, 8, 64)
 > 잠깐 왜 나누어야 하는건데?
 >- Multi-Head Attention의 가장 핵심적인 부분,
->- 각 헤드가 각자의 벡터 공간을 사용하여 본다면 
+>- 각 헤드가 각자의 벡터 공간을 사용하여 본다면 각 부분에서 역할이 정해지기 때문에 비선형적인 데이터들을 분석 가능함.
 
-(4) 차원 재배열 (헤드 기준 계산하기 위해)
+### 차원 재배열 (헤드 기준 계산하기 위해)
+```
 keys = keys.transpose(1, 2)
 queries = queries.transpose(1, 2)
 values = values.transpose(1, 2)
-
-
+```
 → (b, NUM_HEADS, num_tokens, head_dim)
-
-이제 각 헤드별로 어텐션 계산 가능.
+- 이제 각 헤드별로 어텐션 계산 가능.
 
 (5) 어텐션 스코어 계산
 attn_scores = queries @ keys.transpose(2, 3)
