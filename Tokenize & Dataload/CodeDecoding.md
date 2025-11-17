@@ -159,6 +159,8 @@ Matrix element (i, j) = Q[i] · K[j]
 >→ “i번째 토큰이 j번째 토큰에 얼마나 주목하는가?”  
 > → Self-attention의 핵심 의미  
 여기서 나온 score를 softmax해서 가중치로 사용
+ 
+참고 링크: https://velog.io/@park2do/%ED%96%89%EB%A0%AC%EA%B3%B1-Matrix-Multiplication
 
 ### 6. 마스크 적용 (미래 정보 차단)
 ```
@@ -175,11 +177,29 @@ softmax 후 0이 되게 함.
 ```
 attn_weights = torch.softmax(attn_scores / keys.shape[-1]**0.5, dim=-1)
 ```
-스코어를 정규화하여 확률처럼 만듭니다.
-√dₖ로 나누는 이유: 큰 차원일수록 내적값이 커져  
-softmax가 saturation 되는 걸 방지.
+- 가중합을 1로 만듦.
+- 발생할 수 있는 문제 두가지: Scale Explosion - Saturation
 
-(8) Value를 가중합
+#### Scale Explosion
+스케일 값이 적절한 값으로 조절되지 않아 발생하는 문제
+
+- 일어나는 문제
+  - softmax가 극단적으로 치우침
+  - gradient 흐름이 불안정해짐
+
+#### Saturation
+Softmax가 너무 큰 값일 때 거의 0과 1만 나오는 현상
+
+- 일어나는 문제
+  - 미분값이 0이 됨 (gradient vanishing)
+  - 학습이 안됨
+  - 어텐션이 특정 토큰에 **완전 고정**
+
+#### 해결방법
+  - √dₖ로 나누기
+
+
+### 8. Value를 가중합
 ```
 context_vec = (attn_weights @ values).transpose(1, 2)
 ```
