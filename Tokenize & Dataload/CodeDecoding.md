@@ -1,4 +1,6 @@
 # [CD] Multi-Head Attention
+Link: https://velog.io/@park2do/%EC%BD%94%EB%93%9C-%ED%8C%8C%ED%97%A4%EC%B9%98%ED%82%A4-Multi-Head-Attention
+
 Transformer의 핵심 구성요소인 “Multi-Head Attention” (다중 헤드 어텐션) 을 PyTorch로 직접 구현한 클래스.
 
 ## 🧩 전체 구조 요약
