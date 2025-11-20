@@ -244,49 +244,85 @@ class LayerNorm(nn.Module):
 - super().__init__()는 부모 클래스(nn.Module)의 초기화 함수를 호출합니다. PyTorch 모델 정의에서 필수
 
 >- emb_dim이 위에서 Multi-Head Attention에서 정의한 dim이랑 같은 수인건가
+>- 맞아 같은 거임. 
 
 ### 3. eps
 ``` eps
 self.eps = 1e-5
-```
+``` 
 
 > eps가 무슨 의미인데?
-
+>- epsilon의 약자 
+>- "0으로 나누는 것을 방지하기 위한 아주 작은 값"
+>- 0과 가까우면 **나누기 연산이 폭발함**
+>- 안정적인 계산을 하기 위해 분모에 더하는 작은 수
 
 ### 4. scale
 ``` scale
 self.scale = nn.Parameter(torch.ones(emb_dim))
 self.shift = nn.Parameter(torch.zeros(emb_dim))
 ```
-- `scale`은 학습 가능한 파라미터 γ (gamma)입니다.
-- 초기값은 모두 1로 설정되어 있으며, 레이어 정규화 후 출력에 곱해집니다.
-- nn.Parameter로 정의하면 학습 시 업데이트됩니다.
+- `scale`은 γ (gamma) - 크기 값 (원래 크기와 비교)
+- 초기값은 1, 레이어 정규화 후 수정됨.
+- nn.Parameter로 정의하면 학습 시 업데이트 됨
 
-- `shift`는 학습 가능한 파라미터 β (beta)입니다.
-- 초기값은 모두 0으로 설정되어 있으며, 레이어 정규화 후 출력에 더해집니다.
-- 마찬가지로 nn.Parameter로 학습됩니다.
+- `shift`는 β (beta) - 위치 값 (원래 위치와 비교)
+- 초기값은 0, 레이어 정규화 후 수정됨.
+- 위와 동일하게 nn.Parameter로 정의하면 학습 시 업데이트 됨.
 
 > 감마-베타와 스케일-쉬프트에 대해서 좀 더 자세히 이해할 것
+#### (1) 평균과 분산에 대해서 먼저 이해해야한다...
+**평균(mean)**  
+평균(mean)은 "가운데 값(대표 값)"  
+
+예시 데이터:
+```평균 예시 데이터
+[2, 4, 6] 
+```
+중간값 = 4
+
+**분산(variance)**  
+분산(variance)는 "흩어진 정도(퍼져있는 정도)"
+
+예시 데이터 A:
+```분산 예시 데이터 A
+[3.9, 4.0, 4.1] > 분산이 작다 
+```
+예시 데이터 B:
+```분산 예시 데이터 A
+[2, 4, 6] > 분산이 크다 
+```
+
+#### (2) 근뎅 이제 Normalization을 하면 원래의 값을 잃어버린다.
+[2, 4, 6] -> [-1, 0, 1]
+
+이러한 이유로 이후, 모델이 필요하면 "정규화를 다시 할 수 있게 만들어야 한다."
+이것을 γ(scale)·β(shift)로 설정해둔다. 
+
+**γ** (scale = 크기 늘리고 줄이기)  
+**β** (shift = 위치 이동)
 
 ## 순전파 foward pass
 ```foward pass
 def forward(self, x):
 ```
-- forward 메서드는 순전파(forward pass)를 정의합니다.
-- x는 입력 텐서입니다. 보통 (batch_size, seq_len, emb_dim) 형태입니다.
+- forward 메서드는 순전파(forward pass)
+- x는 입력 텐서입니다. 일반적으로 (batch_size, seq_len, emb_dim)
 
 ### 1. 평균 계산
 ```
 mean = x.mean(dim=-1, keepdim=True)
 ```
 - 마지막 차원(emb_dim) 기준으로 평균을 계산
-- keepdim=True는 결과 텐서의 차원을 유지해서 나중에 브로드캐스트 연산
-- 예: (batch, seq_len, emb_dim) → (batch, seq_len, 1)
+- keepdim=True는 결과 텐서의 차원을 유지해서 나중에 브로드캐스트 연산 // 차원 값을 유지하겠단 의미
+- 예: (batch, seq_len, emb_dim) → (batch, seq_len, 1) // 마지막 차원 쓰겠단 의미
  
 ### 2. 분산 계산
 ``` 분산 계산
 var = x.var(dim=-1, keepdim=True, unbiased=False)
 ```
+- 마지막 차원(emb_dim) 기준으로 평균을 계산
+- unbased ->  모집단 분석 선택 /
 
 ### 3. 정규화
 ``` Normalization
