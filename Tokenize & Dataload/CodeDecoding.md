@@ -384,3 +384,28 @@ nn.Linear(4×EMB_DIM → EMB_DIM)
 - 입력 임베딩 크기를 4배로 확장하는 단계
 - GELU() 적용
 - 임베딩 크기를 다시 원래 상태로 축소 (Projection Back)
+
+
+# [CD] 5. FeedForward
+
+```
+self.layers = nn.Sequential
+```
+- 여러 레이어(연산)를 순차적으로 묶는 nn.Sequential을 만들어 self.layers에 저장함. 
+- forward에서 이 순서대로 입력이 통과합니다.
+
+``` 확장
+nn.Linear(EMB_DIM, 4 * EMB_DIM),
+```
+- 첫번째 레이어: 선형 변환.
+- FFN 내부 차원을 4배로 확장함.
+
+``` 함수
+GELU(),
+```
+
+``` 축소
+nn.Linear(4 * EMB_DIM, EMB_DIM),
+```
+
+# [CD] 6. TransformerBlock
