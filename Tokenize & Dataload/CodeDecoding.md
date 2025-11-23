@@ -85,7 +85,6 @@ self.register_buffer('mask', torch.triu(torch.ones(CONTEXT_LENGTH, CONTEXT_LENGT
  [0, 0, 0, 1],
  [0, 0, 0, 0]]
 
-    
 ## 순전파 (foward)
 ### 1. 입력 형태
 ```
@@ -385,7 +384,6 @@ nn.Linear(4×EMB_DIM → EMB_DIM)
 - GELU() 적용
 - 임베딩 크기를 다시 원래 상태로 축소 (Projection Back)
 
-
 # [CD] 5. FeedForward
 
 ```
@@ -409,3 +407,92 @@ nn.Linear(4 * EMB_DIM, EMB_DIM),
 ```
 
 # [CD] 6. TransformerBlock
+개요: 트랜스포머를 진행하는 코드 단
+- 근데 이 코드는 일반적으로 알려진 방식과 다른 Pre-LayerNorm 구조
+- 학습 안정성이 더 좋음
+- 원래 구조: `Attention -> Dropout -> Residual -> LayerNorm`
+- Pre-Norm: `Residual -> LayerNrom -> MHA -> Dropout -> Residual Add`
+
+## 이니셜라이징 부분
+### init
+```angular2html
+def __init__(self):
+    super().__init__()
+    self.att = MultiHeadAttention(
+        d_in=EMB_DIM,
+        d_out=EMB_DIM)
+
+    self.ff = FeedForward()
+    self.norm1 = LayerNorm(EMB_DIM)
+    self.norm2 = LayerNorm(EMB_DIM)
+    self.drop_shortcut = nn.Dropout(DROP_RATE)
+```
+- MHA 및 임베딩 차원 정의
+- FFN 정의
+- 정규화 정의 
+- Dropout 정의
+
+### Foward
+서브 레이어: 서브 레이어는 트랜스포머 블록을 구성하는 단위를 뜻함.
+
+#### Self Attention 서브 레이어 
+``` Self Attention
+shortcut = x        # (1) Residual 저장
+x = self.norm1(x)   # (2) LayerNorm 먼저 적용 (Pre-LN)
+x = self.att(x)     # (3) Multi-Head Attention 수행
+x = self.drop_shortcut(x)  # (4) Dropout 적용
+x = x + shortcut    # (5) Residual Add
+```
+
+#### Feed Foward 서브 레이어
+``` Feed Foward
+shortcut = x
+x = self.norm2(x)
+x = self.ff(x)
+x = self.drop_shortcut(x)
+x = x + shortcut
+```
+
+### shortcut / Residual 저장
+```
+shortcut = x        # (1) Residual 저장
+```
+- Residual(잔차) / Residual Connection 
+  - 기존 정보는 그대로 두고 필요한 변화만 더하는 구조
+- 여기서 x의 shape은 `3차원 Tensor`형식으로 존재함.
+  - x.shape = (batch_size, seq_len, emb_dim)
+
+### LayerNorm 적용
+``` Pre-LN
+x = self.norm1(x)   # (2) LayerNorm 먼저 적용 (Pre-LN)
+```
+- LayerNormalization
+  - 각 벡터의 평균과 분산을 맞추어준다.
+
+### MHA 실행
+``` MHA 실행
+x = self.att(x)     # (3) Multi-Head Attention 수행
+```
+- MHA 실행한다. 
+
+### Dropout 적용
+``` Dropout 적용
+x = self.drop_shortcut(x) # (4) Dropout 적용
+```
+- overfitting을 방지하기 위한 regularization 기법
+- 학습 데이터에 랜덤 값을 집어 넣어 다양한 답변을 익히게 하는 방식
+
+| 개념         | Dropout             | Gradient Descent      |
+| ---------- | ------------------- | --------------------- |
+| 목적         | 과적합 방지              | 손실 최소화(학습)            |
+| 작동 방식      | 뉴런 일부를 0으로 꺼버림      | 기울기를 사용해 가중치를 업데이트    |
+| 학습에 끼치는 영향 | 조금 불안정하게 만들어 일반화 향상 | 실제로 모델을 학습시키는 메인 알고리즘 |
+| 적용 위치      | 네트워크 내부 layer       | 모든 parameter 업데이트     |
+| 학습 시만 동작   | YES                 | YES (테스트 단계에서도 계산은 함) |
+
+
+### Residual Add
+``` Residual Add
+x = x + shortcut    # (5) Residual Add
+```
+- 마무리 단계
