@@ -560,7 +560,7 @@ self.drop_emb = nn.Dropout(DROP_RATE)
 >- 모델이 `입력 -> 출력(logits, 확률, 토큰)`을 만들어내는 과정
 >- forward pass로 해석해도 됨.
 
-### (5) self.final_norm
+### (5) Sequential Execution TransformerBlock
 ```
 self.trf_blocks = nn.Sequential(
     *[TransformerBlock() for _ in range(NUM_LAYERS)])
@@ -569,7 +569,9 @@ self.trf_blocks = nn.Sequential(
 - 각 블록은 (LayerNorm → MHA → Residual → LayerNorm → FFN → Residual) 같은 구조로 구성
 - I/O Shape은 블록마다 `batch_size, seq_len, EMB_DIM`으로 유지됨.
 
-> 일단 다 이해가 안감
+> 일단 다 이해가 안감.  
+>- 여러 레이어를 연속적으로 실행하게 해주는 코드 : 트랜스포머 블록을 여러번 통과하게 만드는 코드 ***`NUM_LAYERS`만큼***
+>- 즉, 그냥 반복 실행시킨거라 생각하면 편함.
 
 ### (6) Layer Scale 안정화
 ``` 
