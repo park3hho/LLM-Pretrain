@@ -542,6 +542,9 @@ self.pos_emb = nn.Embedding(CONTEXT_LENGTH, EMB_DIM)
 - `seq_len`이 `CONTEXT_LENGTH`보다 커지면 인덱스 오류가 발생.
 
 > `seq_len`과 `CONTEXT_LENGTH`의 관계성?
+>- `CONTEXT_LENGTH`는 모델이 한번에 처리할 수 있는 최대 토큰 수
+>- 현재 배치 시퀀스의 길이
+>- 즉 더 짧아야함. 길면 IndexError이 발생함.
 
 ### (4) Dropout Layer (일반화 과정)
 ``` Dropout
@@ -551,6 +554,11 @@ self.drop_emb = nn.Dropout(DROP_RATE)
 - 추론(inference)에서는 자동으로 비활성화.
 
 > 추론 과정은 어디서 정확히 진행되는가? Pretrain에서는 안하지 않나? `Reasoning`
+>- 한국어로 추론으로 번역되어 혼동 되었음. 딥러닝 내의 추론은 `inference` 일반적인 뜻의 추론 `reasoning`과 다름
+>
+> 딥러닝 내에서의 inference(추론)은 `예측하는 단계`임을 뜻함.
+>- 모델이 `입력 -> 출력(logits, 확률, 토큰)`을 만들어내는 과정
+>- forward pass로 해석해도 됨.
 
 ### (5) self.final_norm
 ```
