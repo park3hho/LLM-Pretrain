@@ -1,13 +1,13 @@
 # 모델을 정의할 때 사용하는 상수들
 
-VOCAB_SIZE = tokenizer.n_vocab # 50257 Tiktoken
+VOCAB_SIZE = tokenizer.n_vocab # 50257 Tiktoken (틱토크나이저 vocab)
 #VOCAB_SIZE = len(tokenizer) # AutoTokenizer
-CONTEXT_LENGTH = 128  # Shortened context length (orig: 1024)
-EMB_DIM = 768  # Embedding dimension
-NUM_HEADS = 12  # Number of attention heads
-NUM_LAYERS = 12  # Number of layers
-DROP_RATE = 0.1  # Dropout rate
-QKV_BIAS = False  # Query-key-value bias
+CONTEXT_LENGTH = 128  # Shortened context length (orig: 1024) (최대 해석 길이)
+EMB_DIM = 768  # Embedding dimension (임베딩 차원)
+NUM_HEADS = 12  # Number of attention heads (헤드 개수 - 분석하는 두뇌 개수)
+NUM_LAYERS = 12  # Number of layers (트랜스포머 블록을 몇번 통과 시킬 것인가)
+DROP_RATE = 0.1  # Dropout rate (변수 넣는 비율)
+QKV_BIAS = False  # Query-key-value bias (weight tying)
 
 import torch.nn as nn
 

@@ -498,7 +498,6 @@ x = x + shortcut    # (5) Residual Add
 ```
 - 마무리 단계
 
-
 # [CD] 7. GPT Model
 Summary: 
 
@@ -586,7 +585,7 @@ self.final_norm = LayerNorm(EMB_DIM)
 self.out_head = nn.Linear(EMB_DIM, VOCAB_SIZE, bias=False)
 ```
 - `EMB_DIM` -> `VOCAB_SIZE`로 선형 변환 및 각 토큰 위치에 `vocab`에 따른 `logits` 생성
-- `bias=False`의 이유는 출력 중 편향을 생략하거나 embedding과  weight-tying(가중치 공유)를 고려하기 때문이다.
+- `bias=False`의 이유는 출력 중 편향을 생략하거나 embedding과  weight-tying(가중치 공유)를 해야하기 때문이다.
 
 > vocab이 뭔데?, logits도 뭔데?
 >- `vocab`: 단어사전: 모델이 인식할 수 있는 모든 토큰 집합
@@ -595,5 +594,15 @@ self.out_head = nn.Linear(EMB_DIM, VOCAB_SIZE, bias=False)
 >- 모델이 각 토큰이 다음에 올 확률을 얼마나 "좋아하는지" 점수로 나타낸 것 
 >- softmax 직전의 값
 >- 가중치임 가중치, 근데 가중합을 1로 하지 않은.
+>
+> bias=False 와 weight-tying
+> 가중치 공유가 필요한 이유는 세가지를 크게 말할 수 있다.
+>- (1) Semantic Consistency (의미적 연결 유지)
+>> 입력 임베딩(단어를 벡터로 변환하는 함수)와 출력(projection, 벡터를 단어로 되돌리는 함수)의 행렬을 공유하면 언어 모델의 품질이 올라감.
+>- (2) 학습 안정성
+>- (3) 파라미터 절감
+>
+> 하지만 `bias=False`를 한다고 `weight-tying`이 되는 것이 아니다.
+> `weight-tying`을 위한 필수 조건 중 하나가 `bias=False`인 것이다.
 
 ## Forward (실제 데이터가 흐르는 경로)
