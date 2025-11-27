@@ -82,7 +82,7 @@ class GELU(nn.Module):
         ))
 
 
-class FeedForward(nn.Module):
+class FeedForward(nn.Module): # FFNN, 히든레이어층이 입력의 퍼셉트론보다 많아진 다음 다시 원래 개수로 돌아옴
     def __init__(self):
         super().__init__()
         self.layers = nn.Sequential(
