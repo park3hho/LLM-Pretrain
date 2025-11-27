@@ -31,30 +31,29 @@ class MultiHeadAttention(nn.Module): # MHA 정의
         b, num_tokens, d_in = x.shape
 
         keys = self.W_key(x)  # (b, num_tokens, d_out)
-        queries = self.W_query(x)
-        values = self.W_value(x)
+        queries = self.W_query(x) # Q
+        values = self.W_value(x)  # V
 
-        keys = keys.view(b, num_tokens, NUM_HEADS, self.head_dim)
-        values = values.view(b, num_tokens, NUM_HEADS, self.head_dim)
-        queries = queries.view(b, num_tokens, NUM_HEADS, self.head_dim)
+        keys = keys.view(b, num_tokens, NUM_HEADS, self.head_dim) # Key 값 head로 나누기
+        values = values.view(b, num_tokens, NUM_HEADS, self.head_dim) # Value 값 HEAD로 나누기
+        queries = queries.view(b, num_tokens, NUM_HEADS, self.head_dim) # Query 값 HEAD로 나누기
 
-        keys = keys.transpose(1, 2)
-        queries = queries.transpose(1, 2)
-        values = values.transpose(1, 2)
+        keys = keys.transpose(1, 2) # 서순 변환
+        queries = queries.transpose(1, 2) # 서순 변환
+        values = values.transpose(1, 2) # 서순 변환 Mapping 해야함
 
-        attn_scores = queries @ keys.transpose(2, 3)
+        attn_scores = queries @ keys.transpose(2, 3) # 행렬곱, Q-K 연산
 
-        mask_bool = self.mask.bool()[:num_tokens, :num_tokens]
+        mask_bool = self.mask.bool()[:num_tokens, :num_tokens] # 마스킹
+        attn_scores.masked_fill_(mask_bool, -torch.inf) # 얘도
 
-        attn_scores.masked_fill_(mask_bool, -torch.inf)
+        attn_weights = torch.softmax(attn_scores / keys.shape[-1]**0.5, dim=-1) # 소프트 맥스
+        attn_weights = self.dropout(attn_weights) # 과적합 방지
 
-        attn_weights = torch.softmax(attn_scores / keys.shape[-1]**0.5, dim=-1)
-        attn_weights = self.dropout(attn_weights)
+        context_vec = (attn_weights @ values).transpose(1, 2) # Weighted sum QK-V 연산
 
-        context_vec = (attn_weights @ values).transpose(1, 2)
-
-        context_vec = context_vec.reshape(b, num_tokens, self.d_out)
-        context_vec = self.out_proj(context_vec)
+        context_vec = context_vec.reshape(b, num_tokens, self.d_out) # 원래 차원으로 합치기
+        context_vec = self.out_proj(context_vec) # 총 투사
 
         return context_vec
 
