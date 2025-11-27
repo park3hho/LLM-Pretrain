@@ -59,17 +59,17 @@ class MultiHeadAttention(nn.Module): # MHA 정의
 
 
 class LayerNorm(nn.Module):
-    def __init__(self, emb_dim):
+    def __init__(self, emb_dim): # 임베딩 차원
         super().__init__()
-        self.eps = 1e-5
-        self.scale = nn.Parameter(torch.ones(emb_dim))
-        self.shift = nn.Parameter(torch.zeros(emb_dim))
+        self.eps = 1e-5 # epsilon
+        self.scale = nn.Parameter(torch.ones(emb_dim)) # γ 감마 - 크기
+        self.shift = nn.Parameter(torch.zeros(emb_dim)) # β 베타 - 좌표
 
     def forward(self, x):
-        mean = x.mean(dim=-1, keepdim=True)
-        var = x.var(dim=-1, keepdim=True, unbiased=False)
-        norm_x = (x - mean) / torch.sqrt(var + self.eps)
-        return self.scale * norm_x + self.shift
+        mean = x.mean(dim=-1, keepdim=True) # 평균치 구하기
+        var = x.var(dim=-1, keepdim=True, unbiased=False) # 모집단 분석
+        norm_x = (x - mean) / torch.sqrt(var + self.eps) # 정규화
+        return self.scale * norm_x + self.shift # 크기와 좌표 기억한 후 되돌리기.
 
 class GELU(nn.Module):
     def __init__(self):
