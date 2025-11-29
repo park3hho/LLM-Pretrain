@@ -1,5 +1,6 @@
 from tokenizeNdataload import tokenizer
 
+import torch
 # 모델을 정의할 때 사용하는 상수들
 
 VOCAB_SIZE = tokenizer.n_vocab # 50257 Tiktoken (틱토크나이저 vocab)

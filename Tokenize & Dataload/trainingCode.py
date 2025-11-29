@@ -1,4 +1,4 @@
-from tokenizeNdataload import train_loader,
+from tokenizeNdataload import train_loader
 from NeuralNetworkModel import GPTModel
 
 import torch
