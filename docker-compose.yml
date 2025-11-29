@@ -1,11 +1,29 @@
-version: '3.11'
+version: '3.8'  # 3.11은 docker-compose 버전 형식이 아님 (보통 3.8 사용)
 
 services:
   llmpretrain:
     build: .
     container_name: llm-cont
     volumes:
-      - ./:/app   # docker-compose.yml이 있는 폴더를 컨테이너 /app과 동기화
+      - ./:/app
+      # 주의: 로컬에 .venv 폴더가 있다면 이를 컨테이너에 마운트하지 않도록 제외하거나
+      # 위 Dockerfile처럼 UV_PROJECT_ENVIRONMENT를 사용하여 경로를 분리해야 함.
+    environment:
+      # Dockerfile에서 설정했지만 명시적으로 다시 확인
+      - UV_PROJECT_ENVIRONMENT=/uv-venv
     working_dir: /app
-    command: bash  # 실행 시 bash로 접속, 필요 시 uv run python main.py로 바꿀 수 있음
+
+    # LLM 학습 시 PyTorch 데이터 로더 등을 위해 공유 메모리 증설 권장
+    shm_size: '8gb'
+
+    # GPU 지원 설정 (NVIDIA GPU 사용 시 주석 해제)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+    command: bash  # 디버깅용 (실제 실행 시 python main.py로 변경)
     tty: true

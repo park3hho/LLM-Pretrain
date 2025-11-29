@@ -1,3 +1,5 @@
+from tokenizeNdataload import tokenizer
+
 # 모델을 정의할 때 사용하는 상수들
 
 VOCAB_SIZE = tokenizer.n_vocab # 50257 Tiktoken (틱토크나이저 vocab)
@@ -10,7 +12,6 @@ DROP_RATE = 0.1  # Dropout rate (변수 넣는 비율)
 QKV_BIAS = False  # Query-key-value bias (weight tying)
 
 import torch.nn as nn
-
 
 class MultiHeadAttention(nn.Module): # MHA 정의
     def __init__(self, d_in, d_out):
