@@ -17,13 +17,13 @@ services:
     shm_size: '8gb'
 
     # GPU 지원 설정 (NVIDIA GPU 사용 시 주석 해제)
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: 1
-    #           capabilities: [gpu]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
     command: bash  # 디버깅용 (실제 실행 시 python main.py로 변경)
     tty: true
