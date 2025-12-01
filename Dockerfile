@@ -38,4 +38,4 @@ COPY . .
 
 # 9️⃣ 실행 명령
 # PATH에 venv가 등록되었으므로 바로 python 실행 가능
-CMD ["python", "main.py"]
+CMD ["python", "app.py"]
