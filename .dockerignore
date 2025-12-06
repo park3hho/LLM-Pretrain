@@ -5,4 +5,3 @@ __pycache__
 *.pyo
 *.pyd
 .env
-Tokenize & Dataload/Epoch/train_results
