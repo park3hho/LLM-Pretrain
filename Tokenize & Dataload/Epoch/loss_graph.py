@@ -14,3 +14,4 @@ plt.xlabel("Epoch")
 plt.ylabel("Avg Loss")
 plt.title("Training Loss")
 plt.show()
+plt.savefig("loss.png")   # 🔥 컨테이너 내부에 loss.png 저장

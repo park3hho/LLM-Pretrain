@@ -1,15 +1,14 @@
 # LLM Pretrain
 
 ## Summarize
-> 1. PREPARE Datasets 
-> 2. PROCESSING Datasets
-
+> 1. PROCESSING Datasets 
+> 2. MAIN Logic
+> 3. AFTER Process
 
 ## PREPARE Datasets
-Harry Potter from Kaggle
+Source of Dataset: Harry Potter from Kaggle
 
-## PROCESSING Datasets
-LIBRARY
+### LIBRARY
 1. re
 2. clean-text
 3. panda
@@ -17,14 +16,21 @@ LIBRARY
 ### Clean-text
 No function, remove the line-break.
 ### re
+Cleaning Data Text
 
-## Tokenize & DataLoader
+## MainLogic
+### Tokenize & DataLoader
 ### TikTokenizer
 good for eng
 
 ### DataLoader
 #### Input & Target
 Input에 따른 Target 값을 추측하게 만든다.
+
+
+## AFTER Process
+### Losses Graph
+![훈련 손실 그래프](images/loss.png)
 
 --- 
 Github: 
