@@ -1,4 +1,4 @@
-from tokenizeNdataload import tokenizer
+from .tokenizeNdataload import tokenizer
 
 import torch
 # 모델을 정의할 때 사용하는 상수들

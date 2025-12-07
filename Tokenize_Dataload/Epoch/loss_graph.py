@@ -2,7 +2,7 @@ import re
 import matplotlib.pyplot as plt
 
 # 로그 파일 읽기
-with open("/app/Tokenize & Dataload/Epoch/train_log.txt", "r", encoding="utf-8") as f:
+with open("/app/Tokenize_Dataload/Epoch/train_log.txt", "r", encoding="utf-8") as f:
     text = f.read()
 
 # Avg Loss 값만 정규식으로 추출
