@@ -47,9 +47,42 @@ Examples:
 | FlashAttention  | 완전한 Attention 패턴 퓨전        |  
 
 #### b. Memory Coalescing
+Definition: When Number of Threads read a memory, make memory `sequential` and `coalesce` them.
+
+`WARP`: 32 threads
+>- 1:1 Mapping among Threads-Index and Memory-Index 
+>- row-reading
+>- Minimize Stride
+>- Pre-Transpose
+>- shared-memory(Other Way to Reduce GPU-load)
+>- Triton(Making Sequential Memory Address)
+>- Pytorch AutoCoalescing
+
+*1:1 Mapping among Threads-Index and Memor-Index*
+```aiignore
+int idx = threadIdx.x + blockDim.x * blockIdx.x;
+output[idx] = input[idx];
+```
+→ thread0 → input[0]  
+→ thread1 → input[1]  
+→ thread2 → input[2]  
+→ …
+
+*row-reading*
+PyTorch, Numpy: row-major
+
+Good Example
+```(coalescing O)
+float val = A[row][threadIdx.x];  // 행에서 연속된 원소 읽기
+```
+Bad Example
+```(coalescing X)
+float val = A[threadIdx.x][col];  // 열을 따라 접근 → 주소가 뜬금없이 멀어짐
+```
 
 
 #### c. Thread/Block Optimization of Batch
+
 
 
 ### 2. Operation Optimization
