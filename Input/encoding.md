@@ -80,9 +80,8 @@ Bad Example
 float val = A[threadIdx.x][col];  // 열을 따라 접근 → 주소가 뜬금없이 멀어짐
 ```
 
-
 #### c. Thread/Block Optimization of Batch
-
+Definition: Batch dimension(B) / what thread handle / what block bind / assign how many thread 
 
 
 ### 2. Operation Optimization
