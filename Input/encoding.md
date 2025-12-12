@@ -83,15 +83,63 @@ float val = A[threadIdx.x][col];  // 열을 따라 접근 → 주소가 뜬금�
 #### c. Thread/Block Optimization of Batch
 Definition: Batch dimension(B) / what thread handle / what block bind / assign how many thread 
 
-
 ### 2. Operation Optimization
 Change of Model Structure
 >- Flash Attention
 >- Fused MLP
 >- LayerNorm fusion
->- QKV 
+>- QKV
 
 Using Operation Library that Pytorch or NVIDIA
+
+#### Flash Attetntion
+Problem of Attention Model
+```
+Q @ K^T -> (b, heads, seq, seq)
+```
+If length of seq is too long, memory cannot hold it.
+
+*The Idea of Flash Attention*
+> Do not make Length of Attention to n^2
+> Cut units of the tile, as soon as calculate and abandon it.
+
+
+#### Fused MLP, LayerNorm
+Normal MLP Sequence
+```
+Linear -> GELU -> Linear -> Dropout
+```
+in Kernel
+```
+Kernel Calling 1: Linear
+Kernel Calling 2: GELU
+Kernel Calling 3: Linear
+Kernel Calling 4: Dropout
+```
+
+*Fused Kernel*
+```Fused kernel
+W1 @ x -> GELU -> W2 @ (Result) -> Dropout
+```
+- use one "CUDA KERNEL"
+- Same Logic with LayerNorm
+
+#### QKV Fusion (QKV Projection Fusion)
+Basic of Attention
+```
+Q = x * Wq  
+K = x * Wk  
+V = x * Wv
+```
+Three times of Kernel Calling
+
+*QKV Fusion*
+```perl
+W = [Wq | Wk | Wv]
+```
+```Arithmetic Flow
+QKV = x @ W
+```
 
 ### 3. Model Compression
 Model Compression 
