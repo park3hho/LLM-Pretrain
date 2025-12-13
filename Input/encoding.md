@@ -3,6 +3,8 @@
 > b. Declair of REASONING
 > c. Tokenizer & Ready to Answer
 > d. Single Token Prediction
+> e. generate 함수 (진짜 핵심)
+> f. 사용자 입력 + 실제 생성
 
 ## a. GPU Acceleration
 ```
@@ -323,4 +325,6 @@ print(out)
 - 텐서 → 문자열
 - “Dobby is ___” 의 ___에 들어갈 단어
 
-## e. 
+## e. generate 함수 (진짜 핵심)
+
+## f. 사용자 입력 + 실제 생성
