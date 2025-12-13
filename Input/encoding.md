@@ -1,4 +1,10 @@
-## GPU Acceleration
+# Encoding Code Decoding
+> a. GPU Accelerartion
+> b. Declair of REASONING
+> c. Tokenizer & Ready to Answer
+> d. Single Token Prediction
+
+## a. GPU Acceleration
 ```
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 ```
@@ -238,7 +244,83 @@ Hardware-Unit
 - Proper memory Aligning
 
 
-## Declair of REASONING
+## b. Declair of REASONING
 ```
 model.eval()
 ```
+
+## c. Tokenizer & Ready to Answer
+```
+import tiktoken # pip install tiktoken
+tokenizer = tiktoken.get_encoding("gpt2")
+```
+- OpenAI GPT-2와 동일한 BPE 토크나이저
+- 모델이 학습될 때 사용한 토큰 분할 방식과 반드시 같아야 함
+👉 토크나이저 다르면 출력은 전부 쓰레기
+
+### Readiness
+```
+idx = torch.tensor(idx).unsqueeze(0).to(device)
+```
+| 코드                  | 의미                           |
+| ------------------- | ---------------------------- |
+| `torch.tensor(idx)` | 리스트 → 텐서                     |
+| `unsqueeze(0)`      | batch 차원 추가 → `(1, seq_len)` |
+| `.to(device)`       | CPU or GPU 이동                |
+
+👉 모델 입력 형태 = (batch, sequence)
+
+## d. Single Token Prediction
+```
+with torch.no_grad():
+    logits = model(idx)
+```
+- 추론이므로 gradient 계산 X  
+- 출력 형태:
+```
+(batch, seq_len, vocab_size)
+```
+---
+```
+logits = logits[:, -1, :]
+```
+- 마지막 토큰 기준으로 다음 토큰 확률만 사용
+- shape:
+```
+(1, vocab_size)
+```
+---
+🔝 Top-10 후보 출력
+```
+top_logits, top_indices = torch.topk(logits, 10)
+```
+확률(정확히는 logit)이 가장 높은 토큰 10개
+
+---
+```
+for p, i in zip(top_logits.squeeze(0).tolist(), top_indices.squeeze(0).tolist()):
+    print(f"{p:.2f}\t {i}\t {tokenizer.decode([i])}")
+```
+- logit 값
+- 토큰 ID
+- 사람이 읽을 수 있는 문자열
+
+👉 모델이 “다음에 나올 것 같다”고 생각하는 단어들
+
+---
+```
+idx_next = torch.argmax(logits, dim=-1, keepdim=True)
+```
+- greedy decoding  
+- 가장 높은 확률 하나 선택  
+---
+
+```
+flat = idx_next.squeeze(0)
+out = tokenizer.decode(flat.tolist())
+print(out)
+```
+- 텐서 → 문자열
+- “Dobby is ___” 의 ___에 들어갈 단어
+
+## e. 
