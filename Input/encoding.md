@@ -149,7 +149,90 @@ Model Compression
 
 Descend Amount of Caputation
 
+#### Quantization
+float(32) -> INT8 or INT4
+> Post-Training Quantization(PTQ): Quantizing After Training
+> Quantization-Aware Training(QAT): Qunatizing During Training 
+
+#### Pruning
+Get rid of Unnecessary Parameters
+
+#### Distilation
+Teacher - Student
+> Student Imitate Teacher's Answer
+
 ### 4. CUDA Tunnig and Optimization
 Optimization GPU Code on CUDA LEVEL
+>- a. Memory Hierarchy Optimization
+>- b. Thread / Warp / Block Mapping
+>- c. Instruction-Level Optimization
+>- d. Asynchronous Execution & Overlap
+>- e. Precision & Tensor Core Optimization
 
->- NVIDIA Researcher LEVEL
+#### a. Memory Hierarchy Optimization
+Main Key of GPU Calculation is Memory, not Arithmetic.
+
+*Main Strategy*
+- Global Memory: Access Minimization
+- Shared / Register: Maximum Usage 
+
+*Main Methods*
+- Coalesced Memory Access
+- Shared Memory tiling
+- Register blocking
+- Avoid bank conflict
+- Prefetching
+
+🔑 70% of CUDA Optimization up to Memory.
+
+#### b. Thread / Warp / Block Mapping
+(Hardware-Friendly Parallelization)
+Thread(32) → Warp
+a Number of Warp → SM
+
+*Main Strategy*
+- Warp divergence Reduction
+- Occupancy Maximization
+
+*Main Methods*
+- Branch 제거 (if → mask)
+- Thread-per-element Design
+- Block size Tunning (128 / 256 / 512)
+- Warp-specialization
+
+#### c. Instruction-Level Optimization
+Make Computing-Cost Cheaper
+
+*Main Strategy*
+- Reduction of Expensive Computing
+- Pipelining
+
+*Main Methods*
+- FMA 
+- fast math (__expf, __logf)
+- Loop unrolling
+- Instruction fusion
+
+#### d. Asynchronous Execution & Overlap
+*Main Strategy*  
+- Arithmetic and Memory Overlap  
+
+*Main Methods*
+- CUDA Streams
+- Async memcpy
+- Double buffering
+- Pipeline parallelism
+
+#### e. Precision & Tensor Core Optimization
+Hardware-Unit
+
+(NVIDIA RESEARCHER MOST-NOTICED PARTS)
+
+*Main Strategy*
+- Usage of Tensor Core
+
+*Main Methods*
+- FP16/BF16
+- INT8/INT4
+- MMA Instruction
+- Proper memory Aligning
