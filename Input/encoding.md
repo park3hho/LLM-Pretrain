@@ -236,3 +236,9 @@ Hardware-Unit
 - INT8/INT4
 - MMA Instruction
 - Proper memory Aligning
+
+
+## Declair of REASONING
+```
+model.eval()
+```
