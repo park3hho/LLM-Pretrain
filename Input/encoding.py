@@ -88,6 +88,7 @@ flat = idx_next.squeeze(0) # 배치 차원 제거 torch.Size([1])
 out = tokenizer.decode(flat.tolist()) # 텐서를 리스트로 바꿔서 디코드
 print(out)
 
+
 def generate(model, idx, max_new_tokens, context_size, temperature=0.0, top_k=None, eos_id=None):
 
     for _ in range(max_new_tokens):
@@ -124,7 +125,6 @@ idx = torch.tensor(idx).unsqueeze(0)
 context_size = model.pos_emb.weight.shape[0]
 
 for i in range(10):
-
     token_ids = generate(
         model=model,
         idx=idx.to(device),
