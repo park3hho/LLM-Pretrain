@@ -245,7 +245,6 @@ Hardware-Unit
 - MMA Instruction
 - Proper memory Aligning
 
-
 ## b. Declair of REASONING
 ```
 model.eval()
@@ -420,3 +419,48 @@ return idx
 ```
 
 ## f. User Input + Generation
+First Prompt
+```
+start_context = input("Start context: ")
+```
+
+---
+Transformation
+```angular2html
+idx = tokenizer.encode(start_context)
+idx = torch.tensor(idx).unsqueeze(0)
+```
+- INPUT -> Token -> Batch
+
+---
+Positional Embedding, Max Length of Context
+```angular2html
+context_size = model.pos_emb.weight.shape[0]
+```
+
+---
+Sampling
+```
+for i in range(10):
+```
+
+---
+Core GPT Generation Pipeline
+```
+token_ids = generate(
+    model=model,
+    idx=idx.to(device),
+    max_new_tokens=50,
+    context_size=context_size,
+    top_k=50,
+    temperature=0.5
+)
+```
+
+---
+Print
+```
+flat = token_ids.squeeze(0)
+out = tokenizer.decode(flat.tolist()).replace("\n", " ")
+print(i, ":", out)
+```
