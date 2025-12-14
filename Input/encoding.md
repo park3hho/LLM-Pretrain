@@ -326,5 +326,97 @@ print(out)
 - “Dobby is ___” 의 ___에 들어갈 단어
 
 ## e. generate Function (Core)
+Core Logic that GPT Generates Sentences.
+```
+def generate(model, idx, max_new_tokens, context_size, temperature=0.0, top_k=None, eos_id=None):
+```
+| 인자               | 의미         |
+| ---------------- | ---------- |
+| `idx`            | 현재 토큰 시퀀스  |
+| `max_new_tokens` | 몇 토큰 생성할지  |
+| `context_size`   | 최대 컨텍스트 길이 |
+| `temperature`    | 확률 분산      |
+| `top_k`          | 후보 제한      |
+| `eos_id`         | 종료 토큰      |
+---
+Loop that generates Token One by One
+```angular2html
+for _ in range(max_new_tokens):
+```
+---
+prevent exceed `context window`
+```
+idx_cond = idx[:, -context_size:]
+```
+- 최근 토큰만 사용
+👉 Transformer의 positional embedding 한계 때문
+
+---
+```
+with torch.no_grad():
+    logits = model(idx_cond)
+```
+- 다시 forward
+- shape (batch, seq, vocab)
+
+---
+```
+logits = logits[:, -1, :]
+```
+- 마지막 토큰 기준 다음 토큰 예측
+
+---
+Top-K 필터링
+```
+if top_k is not None:
+
+top_logits, _ = torch.topk(logits, top_k)
+min_val = top_logits[:, -1]
+
+logits = torch.where(
+    logits < min_val,
+    torch.tensor(float("-inf")).to(logits.device),
+    logits
+)
+```
+- 상위 K개 중 최소값
+- 👉 상위 K개만 살리고 나머지는 확률 0
+
+---
+Temperature Sampling
+```
+if temperature > 0.0:
+
+logits = logits / temperature
+probs = torch.softmax(logits, dim=-1)
+idx_next = torch.multinomial(probs, num_samples=1)
+```
+| temperature | 효과     |
+| ----------- | ------ |
+| 낮음          | 보수적    |
+| 높음          | 창의적    |
+| 0           | greedy |
+
+```
+idx_next = torch.argmax(logits, dim=-1, keepdim=True)
+```
+temperature == 0
+
+---
+종료 조건
+```
+if idx_next == eos_id:
+    break
+```
+
+---
+토큰 이어붙이기
+```
+idx = torch.cat((idx, idx_next), dim=1)
+```
+최종 토큰 시퀀스 반환
+```
+return idx
+```
 
 ## f. User Input + Generation
