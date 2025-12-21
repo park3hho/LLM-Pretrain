@@ -1,6 +1,7 @@
 # LLM Pretrain
-Imitated LLM Model: `GPT 2`  
-Curriculum: Training - Inference
+*Duration*: 2025 Nov 07 - 2025 Dec 14
+*Curriculum*: Training - Inference
+*Imitated LLM Model*: `GPT 2`  
 
 ## Training Summarize
 > 1. PROCESSING Datasets 
