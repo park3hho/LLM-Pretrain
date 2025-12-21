@@ -65,13 +65,32 @@ Context Length x EMB_DIM
 > (2.d) Residual   
 
 #### Shared Components
-1. LayerNormalization
-2. Dropout
-3. Residual
+*1. LayerNormalization*
+
+Purpose:   
+Logic:  
+
+*2. Dropout*
+
+Purpose:   
+Logic:  
+
+*3. Residual*
+
+Purpose:   
+Logic:  
+
 
 #### Separate Components
-1. Attention_Score (Multi-Head Attention)
-2. FFNN
+*1. Attention_Score (Multi-Head Attention)*
+
+Purpose:   
+Logic:  
+
+*2. FFNN*
+
+Purpose:   
+Logic:
 
 ### e. Final Normalization
 
