@@ -73,7 +73,8 @@ Context Length x EMB_DIM
 1. Attention_Score (Multi-Head Attention)
 2. FFNN
 
-### e. Finalization
+### e. Final Normalization
+
 
 ### f. logits 
 
