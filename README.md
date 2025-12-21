@@ -1,7 +1,8 @@
 # LLM Pretrain
-*Duration*: 2025 Nov 07 - 2025 Dec 14  
-*Curriculum*: Training - Inference  
-*Imitated LLM Model*: `GPT 2`  
+***Duration***: 2025 Nov 07 - 2025 Dec 14  
+***Curriculum***: Training - Inference  
+***Imitated LLM Model***: `GPT 2`  
+
 
 ## Training Summarize
 > 1. PROCESSING Datasets 
@@ -32,7 +33,7 @@ e. Finalization
 f. logits
 
 ### a. Preparation
-Define   
+Definition
 (1) Vocab (2) Context Length (3) Epoch (4) Batch Size (5) FFNN Hidden Dim (6) Num of layers (7) Num of Attention Head
 
 ### b. Embedding
@@ -42,10 +43,41 @@ Define
 **Dataset**: Pre-Processed `Harry Potter from Kaggle`  
 **Logic**: Token Embedding `Dataset` by `Tokenizer`  
 
-(2) Position Embedding
+(2) Position Embedding  
+
 Context Length x EMB_DIM
 
-### Tokenize & DataLoader
+### c. Dropout
+(1) Making Noise  
+**Built-In Function of PyTorch**: `nn.dropout`
+
+### d. Transformer Block
+> 1. **Multi Head Attention**  
+> (1.a) Layer Normalization  
+> (1.b) Attention_Score  
+> (1.c) Dropout  
+> (1.d) Residual  
+> 
+> 2.  **FFNN**  
+> (2.a) Layer Normalization  
+> (2.b) FFNN  
+> (2.c) Dropout  
+> (2.d) Residual   
+
+#### Shared Components
+1. LayerNormalization
+2. Dropout
+3. Residual
+
+#### Separate Components
+1. Attention_Score (Multi-Head Attention)
+2. FFNN
+
+### e. Finalization
+
+### f. logits 
+
+
 ### TikTokenizer
 good for eng
 
