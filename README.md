@@ -67,37 +67,39 @@ Context Length x EMB_DIM
 #### Shared Components
 *1. LayerNormalization*
 
-Purpose:   
-Logic:  
+Purpose: for Sustainability  
+Logic: Shift and Scale  
 
 *2. Dropout*
 
-Purpose:   
-Logic:  
+Purpose: for Preventing Overfitting  
+Logic: Built-in Function (Modify Drop_Rate)  
 
 *3. Residual*
 
-Purpose:   
-Logic:  
-
+Purpose: for Including previous activation 
+Logic: a = a + b  
 
 #### Separate Components
 *1. Attention_Score (Multi-Head Attention)*
 
-Purpose:   
-Logic:  
+Purpose: for Computing pairwise relevance between tokens | mixing across features  
+Logic: Attention(Q,K,V) = softmax(QxK⊤)*V  
 
 *2. FFNN*
 
-Purpose:   
-Logic:
+Purpose: non-linearization between each tokens  
+Logic: GeLU | ReLU
 
 ### e. Final Normalization
+
 
 
 ### f. logits 
 
 
+
+---
 ### TikTokenizer
 good for eng
 
