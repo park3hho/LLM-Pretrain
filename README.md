@@ -93,10 +93,16 @@ Logic: GeLU | ReLU
 
 ### e. Final Normalization
 
-
+Final LayerNorm은 “마지막에 소리 크기 맞추는 마스터링”이다.
 
 ### f. logits 
 
+```
+logits = h · Wᵀ (+ b)
+```
+`h`: Last hidden state
+`w`: vocab projection
+`logits`: Each token "Next Score"
 
 
 ---
