@@ -250,7 +250,7 @@ LayerNorm, Residual: 무시 가능 (수치 작음)
 - 한 스텝 FLOPs: 약 5.3 TFLOPs (12 Layer + output)  
 - 배치 128, seq_len 128 기준  
 
-> 즉, 배치 하나 돌릴 때 CPU/GPU가 약 5조 3천억 번 연산을 수행하는 셈입니다.
+> 즉, 배치 하나 돌릴 때 CPU/GPU가 약 5조 3천억 번 연산을 수행하는 셈.
 
 
 ## 3. 1 Epochs 251 Steps

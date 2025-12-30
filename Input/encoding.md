@@ -1,10 +1,10 @@
 # Encoding Code Decoding
-> a. GPU Accelerartion
-> b. Declair of REASONING
-> c. Tokenizer & Ready to Answer
-> d. Single Token Prediction
-> e. generate Function (Core)
-> f. User Input + Generation
+> a. GPU Accelerartion  
+> b. Declair of REASONING  
+> c. Tokenizer & Ready to Answer  
+> d. Single Token Prediction  
+> e. generate Function (Core)  
+> f. User Input + Generation  
 
 ## a. GPU Acceleration
 ```
